@@ -1,9 +1,10 @@
 from flask import Flask, render_template, request, jsonify
 from cohere.classify import Example
 import random
+import json
 # Import CoHere and its API-KEY
 import cohere
-co = cohere.Client("N2ncDdn4Tz4Veh5x9nMeF3YcnY4BlCmqF45SsGoZ")
+co = cohere.Client("IcjS6EDAbQqo3qHEqdEtbD4h87XjwFtxkFgWAaOe")
 
 # Read CSV File
 import pandas as pd
@@ -107,8 +108,10 @@ examples = [
 
 app = Flask(__name__)
 
-@app.route('/chatbot', method = ['POST'])
-def chatbot():
-    message = request.json['message']
-    response = cohere.generate_response(prompt = message)
-    return jsonify(response)
+@app.route('/App', methods=['POST','GET'])
+def App():
+    message = request.form.get['stuff']
+    print(message)
+    response = co.generate_response(prompt = message)
+    response_string= json.dumps(str(response))
+    return render_template('ActionProvider.js',data=response_string)

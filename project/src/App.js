@@ -18,6 +18,8 @@ const App = () => {
     <div class="app">
       <h1>Student Budget Planner!</h1>
       <Chatbot
+        botAvatar= "logo"
+        
         config={config}
         messageParser={MessageParser}
         actionProvider={ActionProvider}

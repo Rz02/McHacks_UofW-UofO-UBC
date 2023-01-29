@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request, jsonify
 from cohere.classify import Example
-import random
+import random, cohere
 # Import CoHere and its API-KEY
-import cohere
+
 co = cohere.Client("N2ncDdn4Tz4Veh5x9nMeF3YcnY4BlCmqF45SsGoZ")
 
 # Read CSV File
@@ -65,6 +65,7 @@ vegan = [ing for ing in ingredients if not any(ingr in ing for ingr in meat_rela
 # lacto = [ing for ing in ingredients if any(ingr in ing for ingr in lactose_related)]
 non_lacto = [ing for ing in ingredients if not any(ingr in ing for ingr in lactose_related)]
 
+
 bad_recipe = data[cuisine_level < 4.5]
 good_recipe = data[cuisine_level >= 4.5]
 
@@ -74,8 +75,8 @@ short_prep = data[time <= 15]
 # List Up Examples for Cultivation
 examples = [
     # Choosing based on dietary 
-    Example("I don't eat meat", random.choice(vegan)),
-    Example("A dinner for vegan", random.choice(vegan)),
+    Example("I don't eat meat", vegan.sample()),
+    Example("A dinner for vegan", vegan.sample()),
     Example("I don't dare to eat corn", random.choice(non_lacto)),
     Example("A dinner for lactose intolerance", random.choice(non_lacto)),
 
@@ -110,5 +111,5 @@ app = Flask(__name__)
 @app.route('/chatbot', method = ['POST'])
 def chatbot():
     message = request.json['message']
-    response = cohere.generate_response(prompt = message)
+    response = co.generate_response(prompt = message)
     return jsonify(response)

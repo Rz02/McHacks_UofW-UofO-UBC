@@ -15,22 +15,43 @@ ingredients = data['ingredients']
 cuisine_level = data['rating']
 preparation_time = data["total_time"]
 
+#print(cuisine_level)
+#print(ingredients)
+#print(preparation_time)
 
-for time in preparation_time:
-    if 'hr' in time:
-        time_parts = time.split()
-        hours = int(time[0])
-        minutes = int(time[2])
-        total = hours * 60 + minutes
-    else:
-        time_parts = time.split()
-        mins = int(time[0])
-        total = mins
+time_list = [[int(s) for s in str(st).split() 
+            if s.isdigit()] for st in preparation_time]
+
+#print(time_list)
+
+time_ints = [60*sublist[0] + sublist[1] if len(sublist) > 1 
+             else sublist[0] if len(sublist) > 0
+             else 0 for sublist in time_list]
+
+time = pd.Series(time_ints)
+data['total_time'] = time
+
+# for time in time_ints:
+#     if 'hrs' in time:
+#         prepare_time = [60 * time[0] + time[1]]
+#     else:
+#         prepare_time = time[0]
+
+# for time in range(len(preparation_time)):
+#     if 'hrs' in time:
+#         time_parts = time.split()
+#         hours = int(time[0])
+#         minutes = int(time[2])
+#         total = hours * 60 + minutes
+#     else:
+#         time_parts = time.split()
+#         mins = int(time[0])
+#         total = mins
 
 # Self Build Specific Food List
 meat_related = ['tender', 'steak','brisket', 'chicken', 'beef', 'pork', 
                 'mince', 'sausage', 'ham', 'fish', 'honey', 'milk', 'hot dog',
-                'cheese', 'drumstick', 'egg', 'protein', 'fat', 'goose', 'lunch meat',
+                'cheese', 'drumstick                                                                                                                    `````   ', 'egg', 'protein', 'fat', 'goose', 'lunch meat',
                 'duck', 'quail', 'seafood', 'yogurt', 'butter', 'cream',
                 'gelatine', 'dairy', 'bacon', 'elastin', 'collagen', 'aspic']
 
@@ -46,9 +67,9 @@ non_lacto = [ing for ing in ingredients if not any(ingr in ing for ingr in lacto
 
 bad_recipe = data[cuisine_level < 4.5]
 good_recipe = data[cuisine_level >= 4.5]
-long_prep = data[preparation_time > 15]
-short_prep = data[preparation_time <= 15]
 
+long_prep = data[time > 15]
+short_prep = data[time <= 15]
 
 # List Up Examples for Cultivation
 examples = [
@@ -59,16 +80,16 @@ examples = [
     Example("A dinner for lactose intolerance", random.choice(non_lacto)),
 
     # Choosing based on time
-    Example("I am in rush", random.choice(short_prep)),
-    Example("I don't want to put too much effort on cooking", random.choice(short_prep)),
-    Example("I would like to enjoy cooking", random.choice(long_prep)),
-    Example("I want to stay in the kitchen all day long", random.choice(long_prep)),
+    Example("I am in rush", short_prep.sample()),
+    Example("I don't want to put too much effort on cooking", short_prep.sample()),
+    Example("I would like to enjoy cooking", long_prep.sample()),
+    Example("I want to stay in the kitchen all day long", long_prep.sample()),
 
     # Choosing based on quality
-    Example("I just need something to eat", random.choice(bad_recipe)),
-    Example("An eatable dish is good enough", random.choice(bad_recipe)),
-    Example("I'm craving something delicious", random.choice(good_recipe)),
-    Example("I want to become a good chef",random.choice(good_recipe))
+    Example("I just need something to eat", bad_recipe.sample()),
+    Example("An eatable dish is good enough", bad_recipe.sample()),
+    Example("I'm craving something delicious", good_recipe.sample()),
+    Example("I want to become a good chef", good_recipe.sample())
 ]
 
 # inputs = [
